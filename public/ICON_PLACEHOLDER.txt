@@ -1,0 +1,1 @@
+Note: Icon files need to be created. Use 192x192 and 512x512 PNG files with the app logo.
