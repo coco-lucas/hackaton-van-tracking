@@ -1,9 +1,9 @@
 import { Card, CardContent } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
 import type { Trip } from '@/lib/types'
 import { MapPin, Clock, Users, Calendar, ChevronRight } from 'lucide-react'
 import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
+import { Badge } from './ui/badge'
 
 interface TripCardProps {
   trip: Trip
@@ -26,7 +26,7 @@ export function TripCard({ trip, onClick, showDetails = false, className = '' }:
   const dateLabel = isToday ? 'Hoje' : isTomorrow ? 'Amanhã' : formatDate(departureDate)
 
   const statusColors = {
-    agendada: 'bg-status-info/10 text-status-info border-status-info/20',
+    agendada: 'bg-status-info/40 text-status-info border-status-info/20',
     em_andamento: 'bg-status-success/10 text-status-success border-status-success/20',
     concluida: 'bg-muted text-muted-foreground border-border',
     cancelada: 'bg-status-error/10 text-status-error border-status-error/20',
@@ -41,32 +41,32 @@ export function TripCard({ trip, onClick, showDetails = false, className = '' }:
 
   return (
     <Card
-      className={`trip-card-shadow transition-smooth hover:trip-card-shadow-hover cursor-pointer ${className}`}
+      className={`transition-smooth cursor-pointer ${className}`}
       onClick={onClick}
     >
-      <CardContent className="p-4">
+      <CardContent>
         {/* Header with date and status */}
-        <div className="mb-3 flex items-center justify-between">
+        <div className="flex items-center justify-between">
           <div className="flex items-center gap-2 text-sm">
             <Calendar className="h-4 w-4 text-muted-foreground" />
-            <span className="font-medium text-foreground">{dateLabel}</span>
+            <span className="font-bold text-muted-foreground">{dateLabel}</span>
             {!isToday && !isTomorrow && (
               <span className="text-muted-foreground">• {formatDateShort(departureDate)}</span>
             )}
           </div>
-          <span
-            className={`rounded-full border px-2 py-0.5 text-xs font-medium ${
-              statusColors[trip.status]
-            }`}
+          <Badge
+            variant={'default'}
+            className={`${statusColors[trip.status]
+              }`}
           >
             {statusLabels[trip.status]}
-          </span>
+          </Badge>
         </div>
 
         {/* Route info */}
-        <div className="mb-4 space-y-3">
+        <div className="my-4">
           {/* Origin */}
-          <div className="flex items-start gap-3">
+          <div className="flex items-start gap-2">
             <div className="flex flex-col items-center">
               <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10">
                 <div className="h-2 w-2 rounded-full bg-primary" />
@@ -75,7 +75,7 @@ export function TripCard({ trip, onClick, showDetails = false, className = '' }:
             </div>
             <div className="flex-1 pt-1">
               <p className="text-sm font-medium text-foreground">{trip.origem.cidade}</p>
-              <p className="text-xs text-muted-foreground">{formatTime(departureDate)}</p>
+              <p className="text-xs font-bold text-muted-foreground">{formatTime(departureDate)}</p>
             </div>
           </div>
 
@@ -84,9 +84,9 @@ export function TripCard({ trip, onClick, showDetails = false, className = '' }:
             <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10">
               <MapPin className="h-4 w-4 text-primary" />
             </div>
-            <div className="flex-1 pt-1">
+            <div className="flex-1">
               <p className="text-sm font-medium text-foreground">{trip.destino.cidade}</p>
-              <p className="text-xs text-muted-foreground">{formatTime(arrivalDate)}</p>
+              <p className="text-xs font-bold text-muted-foreground">{formatTime(arrivalDate)}</p>
             </div>
           </div>
         </div>
@@ -105,25 +105,21 @@ export function TripCard({ trip, onClick, showDetails = false, className = '' }:
               </div>
             </>
           )}
-          <div className="flex items-center gap-1">
-            <Users className="h-3.5 w-3.5" />
-            <span>
-              {trip.passageiros.length}/{trip.capacidadeTotal}
-            </span>
-          </div>
-          {trip.vagasDisponiveis > 0 && (
-            <span className="ml-auto text-primary font-medium">
-              {trip.vagasDisponiveis} {trip.vagasDisponiveis === 1 ? 'vaga' : 'vagas'}
-            </span>
-          )}
-        </div>
+          <div className='flex flex-col gap-1 items-center'>
 
-        {showDetails && onClick && (
-          <Button variant="ghost" className="mt-3 w-full justify-between" size="sm">
-            Ver detalhes
-            <ChevronRight className="h-4 w-4" />
-          </Button>
-        )}
+            <div className="flex items-center gap-1">
+              <Users className="h-3.5 w-3.5" />
+              <span>
+                {trip.passageiros.length}/{trip.capacidadeTotal}
+              </span>
+            </div>
+            {trip.vagasDisponiveis > 0 && (
+              <span className="ml-auto text-primary font-medium">
+                {trip.vagasDisponiveis} {trip.vagasDisponiveis === 1 ? 'vaga' : 'vagas'}
+              </span>
+            )}
+          </div>
+        </div>
       </CardContent>
     </Card>
   )

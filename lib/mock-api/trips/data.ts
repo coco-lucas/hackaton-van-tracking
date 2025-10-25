@@ -41,7 +41,7 @@ export const generateDriverTrips = (driverId: string): Trip[] => {
   trip1Date.setHours(7, 30, 0, 0)
 
   trips.push({
-    id: 'trip-1',
+    id: `${driverId}-trip-1`,
     motorista: driver,
     origem: locations.teresopolis,
     destino: locations.rioDeJaneiro,
@@ -62,7 +62,7 @@ export const generateDriverTrips = (driverId: string): Trip[] => {
   trip2Date.setHours(17, 0, 0, 0)
 
   trips.push({
-    id: 'trip-2',
+    id: `${driverId}-trip-2`,
     motorista: driver,
     origem: locations.rioDeJaneiro,
     destino: locations.teresopolis,
@@ -84,7 +84,7 @@ export const generateDriverTrips = (driverId: string): Trip[] => {
   trip3Date.setHours(7, 30, 0, 0)
 
   trips.push({
-    id: 'trip-3',
+    id: `${driverId}-trip-3`,
     motorista: driver,
     origem: locations.teresopolis,
     destino: locations.rioDeJaneiroAlt,
@@ -106,7 +106,7 @@ export const generateDriverTrips = (driverId: string): Trip[] => {
   trip4Date.setHours(17, 30, 0, 0)
 
   trips.push({
-    id: 'trip-4',
+    id: `${driverId}-trip-4`,
     motorista: driver,
     origem: locations.rioDeJaneiroAlt,
     destino: locations.teresopolis,
@@ -128,7 +128,7 @@ export const generateDriverTrips = (driverId: string): Trip[] => {
   trip5Date.setHours(8, 0, 0, 0)
 
   trips.push({
-    id: 'trip-5',
+    id: `${driverId}-trip-5`,
     motorista: driver,
     origem: locations.teresopolis,
     destino: locations.rioDeJaneiro,
