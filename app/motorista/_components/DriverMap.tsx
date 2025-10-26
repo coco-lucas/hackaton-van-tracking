@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef } from 'react'
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
@@ -11,26 +11,27 @@ interface DriverMapProps {
   position: [number, number]
 }
 
-interface RoutingProps {
-  position: [number, number]
-}
-
-// Componente interno para adicionar rota ao mapa
-function Routing({ position }: RoutingProps) {
+function Routing({ position }: { position: [number, number] }) {
   const map = useMap()
+  const routingControlRef = useRef<L.Routing.Control | null>(null)
 
   useEffect(() => {
     if (!map) return
 
-    // Remove rota antiga
-    const existing = map._controlContainers?.routingControl
-    if (existing) map.removeControl(existing)
+    // Remove controle anterior se existir
+    if (routingControlRef.current) {
+      map.removeControl(routingControlRef.current)
+    }
 
+    // Cria novo controle de rota
     const control = L.Routing.control({
       waypoints: [
-        L.latLng(position[0], position[1]),
-        L.latLng(-22.9068, -43.1729) // Rio de Janeiro
+        L.latLng(position[0], position[1]), // ponto inicial
+        L.latLng(-23.5505, -46.6333) // São Paulo
       ],
+      router: L.Routing.osrmv1({
+        serviceUrl: 'https://router.project-osrm.org/route/v1'
+      }),
       lineOptions: {
         styles: [{ color: '#3b82f6', weight: 5, opacity: 1 }]
       },
@@ -47,11 +48,16 @@ function Routing({ position }: RoutingProps) {
       routeWhileDragging: false,
       addWaypoints: false,
       draggableWaypoints: false,
-      fitSelectedRoutes: true
+      fitSelectedRoutes: true,
+      showAlternatives: false
     }).addTo(map)
 
+    routingControlRef.current = control
+
     return () => {
-      map.removeControl(control)
+      if (routingControlRef.current) {
+        map.removeControl(routingControlRef.current)
+      }
     }
   }, [map, position])
 
@@ -62,7 +68,7 @@ export function DriverMap({ position }: DriverMapProps) {
   return (
     <MapContainer
       center={position}
-      zoom={6}
+      zoom={8}
       scrollWheelZoom={false}
       style={{ height: '400px', width: '100%', borderRadius: '12px' }}
     >
@@ -73,8 +79,6 @@ export function DriverMap({ position }: DriverMapProps) {
       <Marker position={position}>
         <Popup>Você está aqui 🚗</Popup>
       </Marker>
-
-      {/* Adiciona a rota usando o componente interno */}
       <Routing position={position} />
     </MapContainer>
   )
