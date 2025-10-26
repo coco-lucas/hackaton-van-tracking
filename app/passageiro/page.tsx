@@ -5,21 +5,18 @@ import { useRouter } from 'next/navigation'
 import { getStoredAuth, clearAuth } from '@/lib/mock-api/auth/service'
 import { fetchPassengerTrips } from '@/lib/mock-api/trips/service'
 import type { Trip, Passenger } from '@/lib/types'
-import { TripCard, TripCardSimple } from '@/components/trip-card'
+import { TripCard } from '@/components/trip-card'
+import { TripDetailsDrawer } from '@/components/trip-details-drawer'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import {
   User,
   LogOut,
-  Loader2,
   MapPin,
-  Clock,
   AlertCircle,
   Navigation,
 } from 'lucide-react'
 import { LoadingMessage } from '@/components/loading-message'
-import { TripDetailsDrawer } from '@/components/trip-details-drawer'
 
 export default function PassageiroPage() {
   const router = useRouter()
@@ -27,9 +24,9 @@ export default function PassageiroPage() {
   const [trips, setTrips] = useState<Trip[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
-  const [activeTab, setActiveTab] = useState('proximas')
   const [selectedTrip, setSelectedTrip] = useState<Trip | null>(null)
   const [drawerOpen, setDrawerOpen] = useState(false)
+  const [bookedTripIds, setBookedTripIds] = useState<Set<string>>(new Set())
 
   useEffect(() => {
     const loadPassengerData = async () => {
@@ -69,8 +66,41 @@ export default function PassageiroPage() {
   }
 
   const handleTripClick = (tripId: string) => {
-    setSelectedTrip(trips.find((trip) => trip.id === tripId) || null)
-    console.log('Trip clicked:', tripId)
+    const trip = trips.find((t) => t.id === tripId)
+    if (trip) {
+      setSelectedTrip(trip)
+      setDrawerOpen(true)
+    }
+  }
+
+  const handleConfirmBooking = async (tripId: string) => {
+    if (!passenger) return
+
+    const { confirmBooking } = await import('@/lib/mock-api/trips/booking')
+    const response = await confirmBooking(tripId, passenger.id)
+
+    if (response.success) {
+      // Add trip to booked set
+      setBookedTripIds((prev) => new Set([...prev, tripId]))
+
+      // Refresh trips list to show updated booking status
+      const tripsResponse = await fetchPassengerTrips(passenger.id)
+      if (tripsResponse.success && tripsResponse.data) {
+        setTrips(tripsResponse.data)
+      }
+    } else {
+      setError(response.error?.message || 'Erro ao confirmar reserva')
+    }
+  }
+
+  // Check if user is already booked in a trip
+  const isUserBooked = (trip: Trip) => {
+    if (!passenger) return false
+    // Check if passenger is in the trip's passengers array OR in our local booked set
+    return (
+      trip.passageiros.some((p) => p.id === passenger.id) ||
+      bookedTripIds.has(trip.id)
+    )
   }
 
   if (loading) {
@@ -227,7 +257,9 @@ export default function PassageiroPage() {
         trip={selectedTrip}
         open={drawerOpen}
         onOpenChange={setDrawerOpen}
+        onConfirmBooking={handleConfirmBooking}
         isPassenger={true}
+        isBooked={selectedTrip ? isUserBooked(selectedTrip) : false}
       />
     </>
   )

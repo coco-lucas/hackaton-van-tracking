@@ -1,6 +1,7 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import dynamic from 'next/dynamic'
 import {
   Sheet,
   SheetContent,
@@ -11,9 +12,21 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import type { Trip } from '@/lib/types'
-import { MapPin, Clock, User, Car, Navigation, Loader2 } from 'lucide-react'
+import { Clock, User, Car, Navigation, Loader2, UsersRound } from 'lucide-react'
 import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
+
+// Importa o mapa dinamicamente para evitar problemas com SSR
+const TripMapDynamic = dynamic(
+  () => import('./trip-map').then((m) => ({ default: m.TripMap })),
+  {
+    ssr: false, loading: () => (
+      <div className="w-full h-48 bg-muted rounded-lg flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    )
+  }
+)
 
 interface TripDetailsDrawerProps {
   trip: Trip | null
@@ -23,6 +36,7 @@ interface TripDetailsDrawerProps {
   onStartTrip?: (tripId: string) => Promise<void>
   onCancelTrip?: (tripId: string) => Promise<void>
   isPassenger?: boolean
+  isBooked?: boolean
 }
 
 export function TripDetailsDrawer({
@@ -33,10 +47,28 @@ export function TripDetailsDrawer({
   onStartTrip,
   onCancelTrip,
   isPassenger = true,
+  isBooked = false,
 }: TripDetailsDrawerProps) {
   const [confirming, setConfirming] = useState(false)
   const [starting, setStarting] = useState(false)
   const [canceling, setCanceling] = useState(false)
+  const [showMap, setShowMap] = useState(false)
+
+  // Delay map rendering to avoid Leaflet initialization issues
+  useEffect(() => {
+    if (open && trip) {
+      // Longer delay to ensure drawer animation completes
+      const timer = setTimeout(() => {
+        setShowMap(true)
+      }, 300)
+      return () => {
+        clearTimeout(timer)
+        setShowMap(false)
+      }
+    } else {
+      setShowMap(false)
+    }
+  }, [open, trip])
 
   if (!trip) return null
 
@@ -100,63 +132,54 @@ export function TripDetailsDrawer({
     }
   }
 
-  // Check if user is already in the trip
-  const isBooked = false // In real app: trip.passageiros.some(p => p.id === currentUserId)
-
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent
         side="bottom"
-        className="h-[90vh] rounded-t-2xl p-0 flex flex-col"
+        className="h-[75vh] rounded-t-2xl p-0! flex flex-col [&>button]:hidden"
       >
         {/* Drag Handle */}
-        <div className="flex h-8 w-full items-center justify-center shrink-0">
-          <div className="h-1.5 w-10 rounded-full bg-muted" />
+        <div className="flex h-4 w-full items-center justify-center shrink-0">
+          <div className="mt-4 h-1.5 w-10 rounded-full bg-muted" />
         </div>
 
         {/* Scrollable Content */}
         <div className="flex-1 overflow-y-auto px-4 pb-4">
-          <SheetHeader className="text-left mb-4">
+          <SheetHeader className="text-center -mt-2">
             <SheetTitle className="text-xl font-bold">
               {trip.origem.cidade} → {trip.destino.cidade}
             </SheetTitle>
-            <SheetDescription>
+            <SheetDescription className='-mt-2'>
               {departureDate} • {departureTime}
             </SheetDescription>
           </SheetHeader>
 
-          {/* Map Placeholder */}
-          <div className="w-full h-48 bg-muted rounded-lg mb-4 flex items-center justify-center relative overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-primary/5" />
-            <div className="relative z-10 flex flex-col items-center gap-2">
-              <Navigation className="h-12 w-12 text-primary" />
-              <p className="text-sm text-muted-foreground font-medium">
-                Mapa da rota
-              </p>
-              <p className="text-xs text-muted-foreground">
-                {trip.rota?.distancia} • {trip.rota?.duracao}
-              </p>
-            </div>
+          {/* Map */}
+          <div className="w-full h-48 rounded-lg overflow-hidden">
+            {showMap ? (
+              <TripMapDynamic trip={trip} />
+            ) : (
+              <div className="w-full h-48 bg-muted rounded-lg flex items-center justify-center">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+              </div>
+            )}
           </div>
 
           {/* Driver Info */}
-          <div className="flex items-center gap-4 mb-6 p-4 bg-card border rounded-lg">
-            <Avatar className="h-16 w-16">
-              <AvatarImage src={trip.motorista.foto} alt={trip.motorista.nome} />
-              <AvatarFallback className="bg-primary/10 text-primary font-bold">
-                {driverInitials}
-              </AvatarFallback>
-            </Avatar>
-            <div className="flex-1">
-              <div className="flex items-center gap-2 mb-1">
-                <User className="h-4 w-4 text-muted-foreground" />
-                <p className="text-base font-bold text-foreground">
+          <div className="flex flex-col items-center justify-center">
+            <div className='flex flex-row p-4 items-center'>
+
+              <Avatar className="h-16 w-16">
+                <AvatarImage src={trip.motorista.foto} alt={trip.motorista.nome} />
+                <AvatarFallback className="bg-primary/10 text-primary font-bold">
+                  {driverInitials}
+                </AvatarFallback>
+              </Avatar>
+              <div className="flex flex-col items-start gap-1">
+                <p className="text-base font-bold text-foreground text-center">
                   {trip.motorista.nome.split(' ')[0]} {trip.motorista.nome.split(' ')[1]}
                 </p>
-              </div>
-              <div className="flex items-center gap-2">
-                <Car className="h-4 w-4 text-muted-foreground" />
-                <p className="text-sm text-muted-foreground">
+                <p className="text-sm text-muted-foreground text-center">
                   {trip.motorista.veiculo.modelo} • {trip.motorista.veiculo.placa}
                 </p>
               </div>
@@ -164,33 +187,22 @@ export function TripDetailsDrawer({
           </div>
 
           {/* Trip Details */}
-          <div className="space-y-3 mb-6">
-            <div className="flex items-center gap-3 p-3 bg-muted/50 rounded-lg">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
-                <Clock className="h-5 w-5 text-primary" />
-              </div>
-              <div>
-                <p className="text-xs text-muted-foreground">Saída</p>
-                <p className="text-sm font-semibold text-foreground">{departureTime}</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-3 p-3 bg-muted/50 rounded-lg">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
-                <Navigation className="h-5 w-5 text-primary" />
-              </div>
-              <div>
-                <p className="text-xs text-muted-foreground">Chegada prevista</p>
+          <div className='mb-4  justify-center'>
+            <div className="flex flex-row items-center justify-center gap-1 px-4 py-1">
+              <Clock className="h-3.5 w-3.5 text-primary" />
+              <div className='flex flex-row gap-1'>
+                <p className="text-sm text-muted-foreground">Chegada prevista: </p>
                 <p className="text-sm font-semibold text-foreground">{arrivalTime}</p>
               </div>
             </div>
-            <div className="flex items-center gap-3 p-3 bg-muted/50 rounded-lg">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
-                <User className="h-5 w-5 text-primary" />
+            <div className="flex items-center justify-center gap-1 px-4 py-1">
+              <div className="flex flex-row items-center justify-center gap-1">
+                <UsersRound className="h-3.5 w-3.5 text-primary" />
               </div>
-              <div>
-                <p className="text-xs text-muted-foreground">Vagas disponíveis</p>
+              <div className='flex items-center gap-1'>
+                <p className="text-sm text-muted-foreground">Vagas disponíveis:</p>
                 <p className="text-sm font-semibold text-foreground">
-                  {trip.vagasDisponiveis} de {trip.capacidadeTotal}
+                  {trip.vagasDisponiveis} <span className='font-normal text-muted-foreground text-xs'> / </span> {trip.capacidadeTotal}
                 </p>
               </div>
             </div>
@@ -203,11 +215,10 @@ export function TripDetailsDrawer({
               {stops.map((stop, index) => (
                 <div key={index} className="relative">
                   <div
-                    className={`absolute -left-[34px] top-1.5 h-4 w-4 rounded-full border-4 border-background ${
-                      stop.type === 'origem'
-                        ? 'bg-primary'
-                        : 'bg-primary'
-                    }`}
+                    className={`absolute -left-[34px] top-1.5 h-4 w-4 rounded-full border-4 border-background ${stop.type === 'origem'
+                      ? 'bg-primary'
+                      : 'bg-primary'
+                      }`}
                   />
                   <div>
                     <p className="text-sm font-semibold text-foreground">
@@ -244,11 +255,13 @@ export function TripDetailsDrawer({
               )}
 
               {isBooked && (
-                <div className="w-full p-4 bg-primary/10 border border-primary/20 rounded-lg text-center">
-                  <p className="text-sm font-semibold text-primary">
-                    Você já está reservado nesta viagem
-                  </p>
-                </div>
+                <Button
+                  className="w-full h-12 text-base font-bold"
+                  size="lg"
+                  disabled
+                >
+                  Você já está reservado nesta viagem
+                </Button>
               )}
             </>
           ) : (

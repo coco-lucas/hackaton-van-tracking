@@ -93,3 +93,22 @@ export interface AuthResponse {
   user: User;
   token: string;
 }
+
+export interface CreateTripPayload {
+  motoristaId: string;
+  origem: {
+    lat: number;
+    lng: number;
+    endereco: string;
+    cidade: string;
+  };
+  destino: {
+    lat: number;
+    lng: number;
+    endereco: string;
+    cidade: string;
+  };
+  dataHoraSaida: string; // ISO timestamp
+  passageirosIds: string[]; // Array of passenger IDs to add to the trip
+  capacidadeTotal?: number; // Optional, defaults to vehicle capacity
+}

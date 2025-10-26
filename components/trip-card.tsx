@@ -12,7 +12,7 @@ interface TripCardProps {
   className?: string
 }
 
-export function TripCard({ trip, onClick, showDetails = false, className = '' }: TripCardProps) {
+export function TripCard({ trip, onClick, className = '' }: TripCardProps) {
   const departureDate = new Date(trip.dataHoraSaida)
   const arrivalDate = new Date(trip.dataHoraChegadaPrevista)
 
@@ -67,32 +67,36 @@ export function TripCard({ trip, onClick, showDetails = false, className = '' }:
         <div className="my-4">
           {/* Origin */}
           <div className="flex items-start gap-2">
+            <p className="text-xs font-bold text-muted-foreground">{formatTime(departureDate)}</p>
             <div className="flex flex-col items-center">
               <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10">
                 <div className="h-2 w-2 rounded-full bg-primary" />
               </div>
               <div className="h-8 w-0.5 bg-border" />
             </div>
-            <div className="flex-1 pt-1">
+            <div className="flex-1 pt-2">
               <p className="text-sm font-medium text-foreground">{trip.origem.cidade}</p>
-              <p className="text-xs font-bold text-muted-foreground">{formatTime(departureDate)}</p>
             </div>
           </div>
 
           {/* Destination */}
           <div className="flex items-start gap-3">
+            <p className="text-xs font-bold text-muted-foreground">{formatTime(arrivalDate)}</p>
             <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10">
               <MapPin className="h-4 w-4 text-primary" />
             </div>
             <div className="flex-1">
               <p className="text-sm font-medium text-foreground">{trip.destino.cidade}</p>
-              <p className="text-xs font-bold text-muted-foreground">{formatTime(arrivalDate)}</p>
             </div>
+          </div>
+
+          <div>
+
           </div>
         </div>
 
         {/* Trip details */}
-        <div className="flex items-center gap-4 border-t pt-3 text-xs text-muted-foreground">
+        <div className="flex items-center gap-4 border-t pt-3 text-xs justify-around text-muted-foreground">
           {trip.rota && (
             <>
               <div className="flex items-center gap-1">
@@ -105,7 +109,7 @@ export function TripCard({ trip, onClick, showDetails = false, className = '' }:
               </div>
             </>
           )}
-          <div className='flex flex-col gap-1 items-center'>
+          <div className='flex flex-row gap-1 items-center'>
 
             <div className="flex items-center gap-1">
               <Users className="h-3.5 w-3.5" />
@@ -113,11 +117,6 @@ export function TripCard({ trip, onClick, showDetails = false, className = '' }:
                 {trip.passageiros.length}/{trip.capacidadeTotal}
               </span>
             </div>
-            {trip.vagasDisponiveis > 0 && (
-              <span className="ml-auto text-primary font-medium">
-                {trip.vagasDisponiveis} {trip.vagasDisponiveis === 1 ? 'vaga' : 'vagas'}
-              </span>
-            )}
           </div>
         </div>
       </CardContent>

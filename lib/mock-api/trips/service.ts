@@ -107,3 +107,38 @@ export const cancelTrip = async (tripId: string, reason?: string): Promise<ApiRe
     message: `Viagem ${tripId} cancelada com sucesso${reason ? `: ${reason}` : ''}`,
   })
 }
+
+/**
+ * Create a new trip
+ */
+export const createTrip = async (payload: import('@/lib/types').CreateTripPayload): Promise<ApiResponse<Trip>> => {
+  await simulateDelay('normal')
+
+  if (simulateError()) {
+    return createErrorResponse('Erro ao criar viagem', 'CREATE_TRIP_ERROR')
+  }
+
+  // In a real app, this would:
+  // 1. Validate the payload
+  // 2. Calculate the estimated arrival time based on the route
+  // 3. Create the trip in the database
+  // 4. Return the created trip with a unique ID
+
+  // For now, we'll return a mock success response
+  const newTrip: Trip = {
+    id: `trip-${Date.now()}`,
+    motorista: {} as any, // Would be fetched from database
+    origem: payload.origem,
+    destino: payload.destino,
+    dataHoraSaida: payload.dataHoraSaida,
+    dataHoraChegadaPrevista: new Date(
+      new Date(payload.dataHoraSaida).getTime() + 90 * 60000 // Add 90 minutes
+    ).toISOString(),
+    status: 'agendada',
+    passageiros: [], // Would be populated from passageirosIds
+    vagasDisponiveis: payload.capacidadeTotal || 4,
+    capacidadeTotal: payload.capacidadeTotal || 4,
+  }
+
+  return createSuccessResponse(newTrip)
+}
