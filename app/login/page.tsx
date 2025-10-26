@@ -49,17 +49,18 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background p-4 safe-top safe-bottom">
+    <div className="flex h-screen items-center justify-center bg-background p-4 safe-top safe-bottom overflow-hidden">
       <div className="w-full max-w-md">
         {/* Logo/Header */}
-        <div className="mb-4 text-center">
-          <div className="mb-4 flex justify-center">
+        <div className="mb-6 text-center">
+          <div className="mb-3 flex justify-center">
             <div className="flex items-center justify-center rounded-2xl">
               <Image
                 src={unifeso}
                 alt="Unifeso Logo"
-                width={120}
-                height={120}
+                width={100}
+                height={100}
+                priority
               />
             </div>
           </div>
@@ -70,9 +71,9 @@ export default function LoginPage() {
 
         {/* Login Card */}
         <Card className="trip-card-shadow">
-          <CardHeader>
+          <CardHeader className="pb-4">
             <CardTitle className='text-xl font-bold text-center'>Entrar</CardTitle>
-            <CardDescription className='text-muted-foreground'>
+            <CardDescription className='text-muted-foreground text-center'>
               Digite seu CPF e senha para acessar o sistema
             </CardDescription>
           </CardHeader>
