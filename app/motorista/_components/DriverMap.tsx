@@ -42,6 +42,7 @@ function Routing({ position, destination }: { position: [number, number]; destin
         missingRouteTolerance: 1,
         styles: [{ color: '#3b82f6', weight: 5, opacity: 1 }]
       },
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       createMarker: (i: number, wp: any) =>
         L.marker(wp.latLng, {
           icon: L.icon({
@@ -58,6 +59,7 @@ function Routing({ position, destination }: { position: [number, number]; destin
       fitSelectedRoutes: true,
       showAlternatives: false,
       show: false // Oculta o painel de instruções
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any).addTo(map)
 
     routingControlRef.current = control

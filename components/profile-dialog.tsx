@@ -98,7 +98,7 @@ export function ProfileDialog({ nome, cpf, children }: ProfileDialogProps) {
                 </Button>
               </div>
               <p className="text-xs text-muted-foreground">
-                Clique em "Trocar senha" para solicitar uma redefinição
+                Clique em &ldquo;Trocar senha&rdquo; para solicitar uma redefinição
               </p>
             </div>
           </div>

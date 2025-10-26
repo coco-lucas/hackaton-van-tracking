@@ -3,6 +3,7 @@
 // Currently unused - using mock data instead
 
 // ApiRoute type would be defined when integrating with real backend
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type ApiRoute = any
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000'
@@ -203,6 +204,7 @@ export async function addPassengerToRoute(
   // Check if passenger is already in the list
   const passengerIdNum = parseInt(passengerId, 10)
   const isAlreadyAdded = route.attendance_list.some(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (attendance: any) => attendance.passenger.id === passengerIdNum
   )
 
@@ -216,6 +218,7 @@ export async function addPassengerToRoute(
   const updatedAttendanceList = [
     ...route.attendance_list,
     {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       id: Math.max(...route.attendance_list.map((a: any) => a.id), 0) + 1,
       passenger: {
         id: passengerIdNum,
@@ -230,6 +233,7 @@ export async function addPassengerToRoute(
   ]
 
   return updateRoute(routeId, {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     attendance_list: updatedAttendanceList as any,
   })
 }
@@ -247,10 +251,12 @@ export async function removePassengerFromRoute(
   // Remove the passenger from the list
   const passengerIdNum = parseInt(passengerId, 10)
   const updatedAttendanceList = route.attendance_list.filter(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (attendance: any) => attendance.passenger.id !== passengerIdNum
   )
 
   return updateRoute(routeId, {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     attendance_list: updatedAttendanceList as any,
   })
 }

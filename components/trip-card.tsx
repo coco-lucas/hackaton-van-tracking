@@ -20,8 +20,11 @@ export function TripCard({ trip, onClick, className = '', isConfirmed = false }:
   const formatTime = (date: Date) => format(date, 'HH:mm', { locale: ptBR })
   const formatDate = (date: Date) => format(date, "dd 'de' MMMM", { locale: ptBR })
 
-  const isToday = departureDate.toDateString() === new Date().toDateString()
-  const isTomorrow = departureDate.toDateString() === new Date(Date.now() + 86400000).toDateString()
+  const now = new Date()
+  const isToday = departureDate.toDateString() === now.toDateString()
+  const tomorrow = new Date(now)
+  tomorrow.setDate(tomorrow.getDate() + 1)
+  const isTomorrow = departureDate.toDateString() === tomorrow.toDateString()
 
   const dateLabel = isToday ? 'Hoje' : isTomorrow ? 'Amanhã' : formatDate(departureDate)
 

@@ -19,15 +19,25 @@ export function SwipeToConfirmButton({
   const [isDragging, setIsDragging] = useState(false)
   const [position, setPosition] = useState(0)
   const [confirmed, setConfirmed] = useState(false)
+  const [maxPosition, setMaxPosition] = useState(0)
   const containerRef = useRef<HTMLDivElement>(null)
   const buttonRef = useRef<HTMLButtonElement>(null)
   const startX = useRef(0)
 
-  const maxPosition = containerRef.current
-    ? containerRef.current.offsetWidth - (buttonRef.current?.offsetWidth || 60)
-    : 0
-
   const threshold = maxPosition * 0.85 // 85% of the way
+
+  // Calculate max position after mount
+  useEffect(() => {
+    const updateMaxPosition = () => {
+      if (containerRef.current && buttonRef.current) {
+        setMaxPosition(containerRef.current.offsetWidth - buttonRef.current.offsetWidth)
+      }
+    }
+
+    updateMaxPosition()
+    window.addEventListener('resize', updateMaxPosition)
+    return () => window.removeEventListener('resize', updateMaxPosition)
+  }, [])
 
   useEffect(() => {
     if (confirmed) {

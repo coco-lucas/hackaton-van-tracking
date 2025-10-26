@@ -13,22 +13,31 @@ interface SwipePassengerControlProps {
 export function SwipePassengerControl({
   onConfirm,
   onRemove,
-  passengerName,
   isConfirmed,
 }: SwipePassengerControlProps) {
   const [isDragging, setIsDragging] = useState(false)
   const [position, setPosition] = useState(0)
   const [action, setAction] = useState<'none' | 'confirm' | 'remove'>('none')
+  const [maxPosition, setMaxPosition] = useState(0)
   const containerRef = useRef<HTMLDivElement>(null)
   const buttonRef = useRef<HTMLButtonElement>(null)
   const startX = useRef(0)
 
-  const maxPosition = containerRef.current
-    ? containerRef.current.offsetWidth - (buttonRef.current?.offsetWidth || 60)
-    : 0
-
   const threshold = maxPosition * 0.7 // 70% of the way
   const removeThreshold = -maxPosition * 0.7 // -70% for remove (left swipe)
+
+  // Calculate max position after mount
+  useEffect(() => {
+    const updateMaxPosition = () => {
+      if (containerRef.current && buttonRef.current) {
+        setMaxPosition(containerRef.current.offsetWidth - buttonRef.current.offsetWidth)
+      }
+    }
+
+    updateMaxPosition()
+    window.addEventListener('resize', updateMaxPosition)
+    return () => window.removeEventListener('resize', updateMaxPosition)
+  }, [])
 
   useEffect(() => {
     if (action !== 'none') {

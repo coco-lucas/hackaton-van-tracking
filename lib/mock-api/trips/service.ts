@@ -127,6 +127,7 @@ export const createTrip = async (payload: import('@/lib/types').CreateTripPayloa
   // For now, we'll return a mock success response
   const newTrip: Trip = {
     id: `trip-${Date.now()}`,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     motorista: {} as any, // Would be fetched from database
     origem: payload.origem,
     destino: payload.destino,

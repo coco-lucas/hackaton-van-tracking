@@ -86,6 +86,7 @@ export async function fetchAllTrips(): Promise<Trip[]> {
 
         // Convert API attendance list to frontend Passenger array
         const passengers: Passenger[] = route.attendance_list.map(
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           (attendance: any) => ({
             id: attendance.passenger.id.toString(),
             nome: attendance.passenger.username,
@@ -214,7 +215,8 @@ export async function fetchTripById(tripId: string): Promise<Trip | null> {
 
     // Convert API attendance list to frontend Passenger array
     const passengers: Passenger[] = apiRoute.attendance_list.map(
-      (attendance) => ({
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (attendance: any) => ({
         id: attendance.passenger.id.toString(),
         nome: attendance.passenger.username,
         cpf: attendance.passenger.cpf,

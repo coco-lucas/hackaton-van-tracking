@@ -2,7 +2,6 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import type { ApiRoute } from '@/lib/types'
 import {
   fetchRoutes,
   fetchRouteById,
@@ -14,6 +13,9 @@ import {
   addPassengerToRoute,
   removePassengerFromRoute,
 } from '@/lib/api/routes'
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type ApiRoute = any
 
 export function useRoutes() {
   const [routes, setRoutes] = useState<ApiRoute[]>([])

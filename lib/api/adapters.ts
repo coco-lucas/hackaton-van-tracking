@@ -4,6 +4,7 @@
 import type { Trip, TripWithLocation, Driver, Passenger, Location } from '@/lib/types'
 
 // ApiRoute type would be defined when integrating with real backend
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type ApiRoute = any
 
 /**
@@ -97,6 +98,7 @@ export function tripToApiRoutePayload(trip: Trip): Partial<Omit<ApiRoute, 'id'>>
         phone_number: p.telefone || '',
       },
       attended: false,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     })) as any,
     starting_latitude: trip.origem.lat,
     starting_longitude: trip.origem.lng,
