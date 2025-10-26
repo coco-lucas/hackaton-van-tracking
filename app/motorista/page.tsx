@@ -1,7 +1,6 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
 import dynamic from 'next/dynamic'
 import { getStoredAuth, clearAuth } from '@/lib/mock-api/auth/service'
 import { fetchUpcomingDriverTrips } from '@/lib/mock-api/trips/service'
@@ -9,6 +8,8 @@ import type { Trip, Driver } from '@/lib/types'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Car, LogOut, Loader2, Calendar, Users, MessageSquare, Route } from 'lucide-react'
+
+import PassageirosPage from './_components/Passageiros'
 
 // Tipagem para o mapa
 interface DriverMapProps {
@@ -21,20 +22,22 @@ const DriverMap = dynamic<DriverMapProps>(
   { ssr: false }
 )
 
+type ActiveTab = 'home' | 'passageiros' | 'mensagens'
+
 export default function MotoristaPage() {
-  const router = useRouter()
   const [driver, setDriver] = useState<Driver | null>(null)
   const [trips, setTrips] = useState<Trip[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [position, setPosition] = useState<[number, number] | null>(null)
+  const [activeTab, setActiveTab] = useState<ActiveTab>('home')
 
+  // Carrega dados do motorista
   useEffect(() => {
     const loadDriverData = async () => {
       try {
         const auth = getStoredAuth()
         if (!auth || auth.user.role !== 'motorista') {
-          router.push('/login')
           return
         }
 
@@ -53,18 +56,14 @@ export default function MotoristaPage() {
     }
 
     loadDriverData()
-  }, [router])
+  }, [])
 
   // Rastreamento GPS em tempo real
   useEffect(() => {
     if (navigator.geolocation) {
       const watchId = navigator.geolocation.watchPosition(
-        (pos) => {
-          setPosition([pos.coords.latitude, pos.coords.longitude])
-        },
-        (err) => {
-          console.warn('Erro ao obter localização:', err)
-        },
+        (pos) => setPosition([pos.coords.latitude, pos.coords.longitude]),
+        (err) => console.warn('Erro ao obter localização:', err),
         { enableHighAccuracy: true, maximumAge: 10000, timeout: 5000 }
       )
       return () => navigator.geolocation.clearWatch(watchId)
@@ -73,7 +72,7 @@ export default function MotoristaPage() {
 
   const handleLogout = () => {
     clearAuth()
-    router.push('/login')
+    // aqui você pode redirecionar para login
   }
 
   if (loading) {
@@ -113,53 +112,67 @@ export default function MotoristaPage() {
 
       {/* CONTEÚDO */}
       <div className="container mx-auto p-4 space-y-6">
-        {/* MAPA GPS */}
-        <Card className="trip-card-shadow">
-          <CardContent className="p-4">
-            <h2 className="font-semibold mb-2 flex items-center gap-2">
-              GPS <Route className="h-4 w-4" />
-            </h2>
-            {position ? (
-              <DriverMap position={position} />
-            ) : (
-              <p className="text-sm text-muted-foreground">
-                Obtendo localização...
-              </p>
+        {activeTab === 'home' && (
+          <>
+            {/* MAPA GPS */}
+            <Card className="trip-card-shadow">
+              <CardContent className="p-4">
+                <h2 className="font-semibold mb-2 flex items-center gap-2">
+                  GPS <Route className="h-4 w-4" />
+                </h2>
+                {position ? (
+                  <DriverMap position={position} />
+                ) : (
+                  <p className="text-sm text-muted-foreground">
+                    Obtendo localização...
+                  </p>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* INFORMAÇÕES */}
+              <Button
+                size="sm">
+                Iniciar Corrida
+              </Button>
+
+            {/* PRÓXIMA ROTA */}
+            <div className="grid grid-cols-1 gap-1 h-70">
+              <Card className="trip-card-shadow">
+                <CardContent className="p-3 text-center">
+                  <div className="mb-1 flex justify-center">
+                    <Route />
+                  </div>
+                  <p className="text-xl font-bold text-foreground">ROTA</p>
+                  <p className="text-xs text-muted-foreground">Próxima Viagem</p>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* ESTADO VAZIO */}
+            {trips.length === 0 && !error && (
+              <Card className="trip-card-shadow">
+                <CardContent className="flex flex-col items-center justify-center p-12 text-center">
+                  <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-muted">
+                    <Calendar className="h-8 w-8 text-muted-foreground" />
+                  </div>
+                  <h3 className="mb-2 text-lg font-semibold text-foreground">
+                    Nenhuma viagem agendada
+                  </h3>
+                  <p className="text-sm text-muted-foreground">
+                    Você não possui viagens programadas no momento.
+                  </p>
+                </CardContent>
+              </Card>
             )}
-          </CardContent>
-        </Card>
+          </>
+        )}
 
-        {/* INFORMAÇÕES */}
-        <h3>Tempo de Viagem: 2:05h</h3>
-
-        {/* PRÓXIMA ROTA */}
-        <div className="grid grid-cols-1 gap-1 h-70">
-          <Card className="trip-card-shadow">
-            <CardContent className="p-3 text-center">
-              <div className="mb-1 flex justify-center">
-                <Route />
-              </div>
-              <p className="text-xl font-bold text-foreground">ROTA</p>
-              <p className="text-xs text-muted-foreground">Próxima Viagem</p>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* ESTADO VAZIO */}
-        {trips.length === 0 && !error && (
-          <Card className="trip-card-shadow">
-            <CardContent className="flex flex-col items-center justify-center p-12 text-center">
-              <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-muted">
-                <Calendar className="h-8 w-8 text-muted-foreground" />
-              </div>
-              <h3 className="mb-2 text-lg font-semibold text-foreground">
-                Nenhuma viagem agendada
-              </h3>
-              <p className="text-sm text-muted-foreground">
-                Você não possui viagens programadas no momento.
-              </p>
-            </CardContent>
-          </Card>
+        {activeTab === 'passageiros' && <PassageirosPage />}
+        {activeTab === 'mensagens' && (
+          <div className="text-center text-muted-foreground">
+            Página de mensagens (em desenvolvimento)
+          </div>
         )}
       </div>
 
@@ -167,24 +180,30 @@ export default function MotoristaPage() {
       <nav className="fixed bottom-0 left-0 right-0 bg-card border-t p-2">
         <div className="flex justify-around items-center h-16">
           <button
-            onClick={() => router.push('/motorista/passageiros')}
-            className="flex flex-col items-center text-muted-foreground hover:text-primary transition"
+            onClick={() => setActiveTab('passageiros')}
+            className={`flex flex-col items-center transition ${
+              activeTab === 'passageiros' ? 'text-primary' : 'text-muted-foreground hover:text-primary'
+            }`}
           >
             <Users className="h-6 w-6" />
             <span className="text-xs">Passageiros</span>
           </button>
 
           <button
-            onClick={() => router.push('/motorista')}
-            className="flex flex-col items-center text-primary"
+            onClick={() => setActiveTab('home')}
+            className={`flex flex-col items-center transition ${
+              activeTab === 'home' ? 'text-primary' : 'text-muted-foreground hover:text-primary'
+            }`}
           >
             <Car className="h-7 w-7" />
             <span className="text-xs font-medium">Home</span>
           </button>
 
           <button
-            onClick={() => router.push('/motorista/mensagens')}
-            className="flex flex-col items-center text-muted-foreground hover:text-primary transition"
+            onClick={() => setActiveTab('mensagens')}
+            className={`flex flex-col items-center transition ${
+              activeTab === 'mensagens' ? 'text-primary' : 'text-muted-foreground hover:text-primary'
+            }`}
           >
             <MessageSquare className="h-6 w-6" />
             <span className="text-xs">Mensagens</span>
