@@ -1,6 +1,6 @@
 import { Card, CardContent } from '@/components/ui/card'
 import type { Trip } from '@/lib/types'
-import { MapPin, Clock, Users, Calendar, ChevronRight } from 'lucide-react'
+import { MapPin, Clock, Users, Calendar, ChevronRight, CheckCircle2 } from 'lucide-react'
 import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 import { Badge } from './ui/badge'
@@ -10,15 +10,15 @@ interface TripCardProps {
   onClick?: () => void
   showDetails?: boolean
   className?: string
+  isConfirmed?: boolean
 }
 
-export function TripCard({ trip, onClick, className = '' }: TripCardProps) {
+export function TripCard({ trip, onClick, className = '', isConfirmed = false }: TripCardProps) {
   const departureDate = new Date(trip.dataHoraSaida)
   const arrivalDate = new Date(trip.dataHoraChegadaPrevista)
 
   const formatTime = (date: Date) => format(date, 'HH:mm', { locale: ptBR })
   const formatDate = (date: Date) => format(date, "dd 'de' MMMM", { locale: ptBR })
-  const formatDateShort = (date: Date) => format(date, 'dd/MM', { locale: ptBR })
 
   const isToday = departureDate.toDateString() === new Date().toDateString()
   const isTomorrow = departureDate.toDateString() === new Date(Date.now() + 86400000).toDateString()
@@ -50,16 +50,21 @@ export function TripCard({ trip, onClick, className = '' }: TripCardProps) {
           <div className="flex items-center gap-1 text-sm">
             <Calendar className="h-4 w-4 text-muted-foreground" />
             <span className="font-bold text-muted-foreground">{dateLabel}</span>
-            {!isToday && !isTomorrow && (
-              <span className="text-muted-foreground">• {formatDateShort(departureDate)}</span>
-            )}
           </div>
-          <Badge
-            variant={'default'}
-            className={statusColors[trip.status]}
-          >
-            {statusLabels[trip.status]}
-          </Badge>
+          <div className="flex items-center gap-1.5">
+            {isConfirmed && (
+              <div className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-900">
+                <CheckCircle2 className="h-3 w-3 text-green-600 dark:text-green-500" />
+                <span className="text-xs font-medium text-green-700 dark:text-green-400">Confirmado</span>
+              </div>
+            )}
+            <Badge
+              variant={'default'}
+              className={statusColors[trip.status]}
+            >
+              {statusLabels[trip.status]}
+            </Badge>
+          </div>
         </div>
 
         {/* Route info */}

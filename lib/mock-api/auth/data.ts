@@ -45,48 +45,75 @@ export const mockDrivers: Driver[] = [
 export const mockPassengers: Passenger[] = [
   {
     id: "passenger-1",
-    nome: "Prof. João Oliveira",
+    nome: "Prof. João Pedro Oliveira",
     cpf: "111.444.777-35", // Valid CPF for testing
-    telefone: "(21) 99999-1111",
+    telefone: "(21) 98745-1122",
     role: "passageiro",
-    matricula: "PROF-001",
-    foto: "https://api.dicebear.com/7.x/avataaars/svg?seed=Joao",
+    matricula: "PROF-2024-001",
+    foto: "https://api.dicebear.com/7.x/avataaars/svg?seed=JoaoPedro",
   },
   {
     id: "passenger-2",
-    nome: "Profa. Ana Paula",
+    nome: "Profa. Ana Paula Rodrigues",
     cpf: "222.555.888-69", // Valid CPF for testing
-    telefone: "(21) 99999-2222",
+    telefone: "(21) 99876-3344",
     role: "passageiro",
-    matricula: "PROF-002",
-    foto: "https://api.dicebear.com/7.x/avataaars/svg?seed=Ana",
+    matricula: "PROF-2024-002",
+    foto: "https://api.dicebear.com/7.x/avataaars/svg?seed=AnaPaula",
   },
   {
     id: "passenger-3",
-    nome: "Prof. Roberto Costa",
+    nome: "Prof. Roberto Costa Silva",
     cpf: "333.666.999-03", // Valid CPF for testing
-    telefone: "(21) 99999-3333",
+    telefone: "(21) 97654-5566",
     role: "passageiro",
-    matricula: "PROF-003",
-    foto: "https://api.dicebear.com/7.x/avataaars/svg?seed=Roberto",
+    matricula: "PROF-2023-015",
+    foto: "https://api.dicebear.com/7.x/avataaars/svg?seed=RobertoCosta",
   },
   {
     id: "passenger-4",
-    nome: "Profa. Mariana Lima",
+    nome: "Profa. Mariana Santos Lima",
     cpf: "444.777.000-37", // Valid CPF for testing
-    telefone: "(21) 99999-4444",
+    telefone: "(21) 96543-7788",
     role: "passageiro",
-    matricula: "PROF-004",
-    foto: "https://api.dicebear.com/7.x/avataaars/svg?seed=Mariana",
+    matricula: "PROF-2023-028",
+    foto: "https://api.dicebear.com/7.x/avataaars/svg?seed=MarianaSantos",
   },
   {
     id: "passenger-5",
-    nome: "Prof. Fernando Alves",
+    nome: "Prof. Fernando de Almeida",
     cpf: "555.888.111-71", // Valid CPF for testing
-    telefone: "(21) 99999-5555",
+    telefone: "(21) 95432-9900",
     role: "passageiro",
-    matricula: "PROF-005",
-    foto: "https://api.dicebear.com/7.x/avataaars/svg?seed=Fernando",
+    matricula: "PROF-2022-042",
+    foto: "https://api.dicebear.com/7.x/avataaars/svg?seed=FernandoAlmeida",
+  },
+  {
+    id: "passenger-6",
+    nome: "Profa. Beatriz Ferreira",
+    cpf: "666.999.222-05", // Valid CPF for testing
+    telefone: "(21) 94321-1234",
+    role: "passageiro",
+    matricula: "PROF-2024-007",
+    foto: "https://api.dicebear.com/7.x/avataaars/svg?seed=BeatrizFerreira",
+  },
+  {
+    id: "passenger-7",
+    nome: "Prof. Carlos Eduardo Souza",
+    cpf: "777.000.333-39", // Valid CPF for testing
+    telefone: "(21) 93210-5678",
+    role: "passageiro",
+    matricula: "PROF-2023-033",
+    foto: "https://api.dicebear.com/7.x/avataaars/svg?seed=CarlosEduardo",
+  },
+  {
+    id: "passenger-8",
+    nome: "Profa. Diana Mendes",
+    cpf: "888.111.444-73", // Valid CPF for testing
+    telefone: "(21) 92109-8765",
+    role: "passageiro",
+    matricula: "PROF-2024-012",
+    foto: "https://api.dicebear.com/7.x/avataaars/svg?seed=DianaMendes",
   },
 ];
 

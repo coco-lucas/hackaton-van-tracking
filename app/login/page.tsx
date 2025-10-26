@@ -90,7 +90,7 @@ export default function LoginPage() {
         </Card>
 
         {/* Demo credentials info */}
-        <Card className="mt-4 bg-muted/50">
+        {/* <Card className="mt-4 bg-muted/50">
           <CardContent className="pt-4">
             <p className="text-xs text-muted-foreground mb-2 font-semibold">
               Credenciais de demonstração:
@@ -101,7 +101,7 @@ export default function LoginPage() {
               <p><strong>Senha:</strong> 123456</p>
             </div>
           </CardContent>
-        </Card>
+        </Card> */}
       </div>
     </div>
   )

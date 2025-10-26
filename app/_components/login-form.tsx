@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { cleanCPF, validateCPF } from '@/lib/validations/auth'
+import { PasswordResetConfirmDialog } from '@/components/password-reset-confirm-dialog'
 
 interface LoginFormProps {
   cpf: string
@@ -29,6 +30,7 @@ export function LoginForm({
   const [cpfError, setCpfError] = useState('')
   const [senhaError, setSenhaError] = useState('')
   const [touched, setTouched] = useState({ cpf: false, senha: false })
+  const [passwordResetOpen, setPasswordResetOpen] = useState(false)
 
   const handleCpfChange = (value: string) => {
     // Remove non-digits
@@ -96,72 +98,83 @@ export function LoginForm({
 
   const isFormValid = () => {
     return cpf &&
-           senha &&
-           !cpfError &&
-           !senhaError &&
-           cleanCPF(cpf).length === 11 &&
-           validateCPF(cpf) &&
-           senha.length >= 6
+      senha &&
+      !cpfError &&
+      !senhaError &&
+      cleanCPF(cpf).length === 11 &&
+      validateCPF(cpf) &&
+      senha.length >= 6
   }
 
   return (
-    <form onSubmit={onSubmit} className="space-y-4">
-      <div className="space-y-2">
-        <Label htmlFor="cpf">CPF</Label>
-        <Input
-          id="cpf"
-          type="text"
-          placeholder="000.000.000-00"
-          value={cpf}
-          onChange={(e) => handleCpfChange(e.target.value)}
-          onBlur={handleCpfBlur}
-          required
-          disabled={loading}
-          maxLength={14} // Formatted CPF length
-          className={cpfError && touched.cpf ? 'border-destructive' : ''}
-        />
-        {cpfError && touched.cpf && (
-          <p className="text-xs text-destructive">{cpfError}</p>
-        )}
-      </div>
-
-      <div className="space-y-2">
-        <Label htmlFor="senha">Senha</Label>
-        <Input
-          id="senha"
-          type="password"
-          placeholder="••••••"
-          value={senha}
-          onChange={(e) => onSenhaChange(e.target.value)}
-          onBlur={handleSenhaBlur}
-          required
-          disabled={loading}
-          className={senhaError && touched.senha ? 'border-destructive' : ''}
-        />
-        {senhaError && touched.senha && (
-          <p className="text-xs text-destructive">{senhaError}</p>
-        )}
-      </div>
-
-      {error && (
-        <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
-          {error}
+    <>
+      <form onSubmit={onSubmit} className="space-y-4">
+        <div className="space-y-2">
+          <Label htmlFor="cpf">CPF</Label>
+          <Input
+            id="cpf"
+            type="text"
+            placeholder="000.000.000-00"
+            value={cpf}
+            onChange={(e) => handleCpfChange(e.target.value)}
+            onBlur={handleCpfBlur}
+            required
+            disabled={loading}
+            maxLength={14} // Formatted CPF length
+            className={cpfError && touched.cpf ? 'border-destructive' : ''}
+          />
+          {cpfError && touched.cpf && (
+            <p className="text-xs text-destructive">{cpfError}</p>
+          )}
         </div>
-      )}
 
-      <Button
-        type="submit"
-        className="w-full"
-        disabled={loading || !isFormValid()}
-      >
-        {loading ? (
-          <>
-            <LoadingMessage customText="Entrando" />
-          </>
-        ) : (
-          'Entrar'
+        <div className="space-y-2">
+          <div className="flex items-center justify-between">
+            <Label htmlFor="senha">Senha</Label>
+            <button
+              type="button"
+              onClick={() => setPasswordResetOpen(true)}
+              className="text-xs text-primary hover:underline"
+              disabled={loading}
+            >
+              Esqueci minha senha
+            </button>
+          </div>
+          <Input
+            id="senha"
+            type="password"
+            placeholder="••••••"
+            value={senha}
+            onChange={(e) => onSenhaChange(e.target.value)}
+            onBlur={handleSenhaBlur}
+            required
+            disabled={loading}
+            className={senhaError && touched.senha ? 'border-destructive' : ''}
+          />
+          {senhaError && touched.senha && (
+            <p className="text-xs text-destructive">{senhaError}</p>
+          )}
+        </div>
+
+        {error && (
+          <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
+            {error}
+          </div>
         )}
-      </Button>
-    </form>
+
+        <Button
+          type="submit"
+          className="w-full"
+          disabled={loading || !isFormValid()}
+        >
+          Entrar
+        </Button>
+      </form>
+
+      <PasswordResetConfirmDialog
+        open={passwordResetOpen}
+        onOpenChange={setPasswordResetOpen}
+      />
+    </>
   )
 }

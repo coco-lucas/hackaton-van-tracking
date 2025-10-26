@@ -27,6 +27,7 @@ export default function PassageiroPage() {
   const [selectedTrip, setSelectedTrip] = useState<Trip | null>(null)
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [bookedTripIds, setBookedTripIds] = useState<Set<string>>(new Set())
+  const [confirmedTripIds, setConfirmedTripIds] = useState<Set<string>>(new Set())
 
   useEffect(() => {
     const loadPassengerData = async () => {
@@ -82,6 +83,8 @@ export default function PassageiroPage() {
     if (response.success) {
       // Add trip to booked set
       setBookedTripIds((prev) => new Set([...prev, tripId]))
+      // Mark trip as confirmed
+      setConfirmedTripIds((prev) => new Set([...prev, tripId]))
 
       // Refresh trips list to show updated booking status
       const tripsResponse = await fetchPassengerTrips(passenger.id)
@@ -220,6 +223,7 @@ export default function PassageiroPage() {
                     trip={trip}
                     onClick={() => handleTripClick(trip.id)}
                     showDetails
+                    isConfirmed={confirmedTripIds.has(trip.id) || isUserBooked(trip)}
                   />
                 ))}
               </div>
@@ -235,6 +239,7 @@ export default function PassageiroPage() {
                 trip={trip}
                 onClick={() => handleTripClick(trip.id)}
                 showDetails
+                isConfirmed={confirmedTripIds.has(trip.id) || isUserBooked(trip)}
               />
             ))
           ) : (
