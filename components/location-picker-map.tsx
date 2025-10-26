@@ -40,7 +40,7 @@ function MapClickHandler({ onLocationClick }: MapClickHandlerProps) {
 
 export function LocationPickerMap({
   onLocationSelect,
-  initialCenter = [-23.5505, -46.6333], // São Paulo default
+  initialCenter = [-22.9068, -43.1729], // Rio de Janeiro default
 }: LocationPickerMapProps) {
   const [selectedLocation, setSelectedLocation] = useState<[number, number] | null>(null)
   const [isGeocoding, setIsGeocoding] = useState(false)

@@ -8,7 +8,7 @@ import type { Trip } from '@/lib/types'
 
 // Fix for default marker icons in react-leaflet
 if (typeof window !== 'undefined') {
-  delete (L.Icon.Default.prototype as any)._getIconUrl
+  Reflect.deleteProperty(L.Icon.Default.prototype, '_getIconUrl')
   L.Icon.Default.mergeOptions({
     iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
     iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
@@ -151,10 +151,10 @@ export function TripMap({ trip }: TripMapProps) {
     <MapContainer
       key={trip.id}
       center={center}
-      zoom={10}
+      zoom={20}
       scrollWheelZoom={false}
-      style={{ height: '100%', width: '100%', borderRadius: '12px' }}
-      className="z-0"
+      style={{ height: '60%', width: '100%', borderRadius: '12px' }}
+      className="z-0 max-h-3/5! overflow-hidden"
       whenReady={() => {
         // Map is ready
       }}
@@ -162,6 +162,7 @@ export function TripMap({ trip }: TripMapProps) {
       <TileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        className='hidden!'
       />
 
       {/* Route between origin and destination using OSRM */}

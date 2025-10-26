@@ -47,7 +47,7 @@ export function TripCard({ trip, onClick, className = '' }: TripCardProps) {
       <CardContent>
         {/* Header with date and status */}
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2 text-sm">
+          <div className="flex items-center gap-1 text-sm">
             <Calendar className="h-4 w-4 text-muted-foreground" />
             <span className="font-bold text-muted-foreground">{dateLabel}</span>
             {!isToday && !isTomorrow && (
@@ -56,8 +56,7 @@ export function TripCard({ trip, onClick, className = '' }: TripCardProps) {
           </div>
           <Badge
             variant={'default'}
-            className={`${statusColors[trip.status]
-              }`}
+            className={statusColors[trip.status]}
           >
             {statusLabels[trip.status]}
           </Badge>
@@ -67,7 +66,7 @@ export function TripCard({ trip, onClick, className = '' }: TripCardProps) {
         <div className="my-4">
           {/* Origin */}
           <div className="flex items-start gap-2">
-            <p className="text-xs font-bold text-muted-foreground">{formatTime(departureDate)}</p>
+            <p className="text-xs mt-1.5! font-bold text-muted-foreground">{formatTime(departureDate)}</p>
             <div className="flex flex-col items-center">
               <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10">
                 <div className="h-2 w-2 rounded-full bg-primary" />
@@ -80,8 +79,8 @@ export function TripCard({ trip, onClick, className = '' }: TripCardProps) {
           </div>
 
           {/* Destination */}
-          <div className="flex items-start gap-3">
-            <p className="text-xs font-bold text-muted-foreground">{formatTime(arrivalDate)}</p>
+          <div className="flex items-start gap-2">
+            <p className="text-xs mt-1.5! font-bold text-muted-foreground">{formatTime(arrivalDate)}</p>
             <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10">
               <MapPin className="h-4 w-4 text-primary" />
             </div>

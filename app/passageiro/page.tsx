@@ -212,7 +212,7 @@ export default function PassageiroPage() {
           {/* Today's Trips */}
           {todayTrips.length > 0 && (
             <div>
-              <h2 className="mb-3 text-lg font-semibold text-foreground">Viagens de Hoje</h2>
+              <h2 className="mb-3 text-xl font-semibold text-foreground">Viagens de Hoje</h2>
               <div className="space-y-3">
                 {todayTrips.map((trip) => (
                   <TripCard
@@ -227,6 +227,7 @@ export default function PassageiroPage() {
           )}
 
           {/* Tabs for Upcoming/Past Trips */}
+          <h2 className="mb-3 text-xl font-semibold text-foreground">Próximas viagens</h2>
           {upcomingTrips.length > 0 ? (
             upcomingTrips.map((trip) => (
               <TripCard
@@ -239,7 +240,7 @@ export default function PassageiroPage() {
           ) : (
             <Card className="trip-card-shadow">
               <CardContent className="flex flex-col items-center justify-center p-12 text-center">
-                <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-muted">
+                <div className="mb-3 flex h-16 w-16 items-center justify-center rounded-full bg-muted">
                   <MapPin className="h-8 w-8 text-muted-foreground" />
                 </div>
                 <h3 className="mb-2 text-lg font-semibold text-foreground">

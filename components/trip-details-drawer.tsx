@@ -16,9 +16,9 @@ import { Clock, User, Car, Navigation, Loader2, UsersRound } from 'lucide-react'
 import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 
-// Importa o mapa dinamicamente para evitar problemas com SSR
-const TripMapDynamic = dynamic(
-  () => import('./trip-map').then((m) => ({ default: m.TripMap })),
+// Importa o mapa do motorista com rota
+const DriverMapDynamic = dynamic(
+  () => import('@/app/motorista/_components/DriverMap').then((m) => ({ default: m.DriverMap })),
   {
     ssr: false, loading: () => (
       <div className="w-full h-48 bg-muted rounded-lg flex items-center justify-center">
@@ -155,18 +155,21 @@ export function TripDetailsDrawer({
           </SheetHeader>
 
           {/* Map */}
-          <div className="w-full h-48 rounded-lg overflow-hidden">
+          <div className="w-full h-[300px] rounded-lg overflow-hidden mb-4">
             {showMap ? (
-              <TripMapDynamic trip={trip} />
+              <DriverMapDynamic
+                position={[trip.origem.lat, trip.origem.lng] as [number, number]}
+                destination={[trip.destino.lat, trip.destino.lng] as [number, number]}
+              />
             ) : (
-              <div className="w-full h-48 bg-muted rounded-lg flex items-center justify-center">
+              <div className="w-full h-[300px] bg-muted rounded-lg flex items-center justify-center">
                 <Loader2 className="h-8 w-8 animate-spin text-primary" />
               </div>
             )}
           </div>
 
           {/* Driver Info */}
-          <div className="flex flex-col items-center justify-center">
+          <div className="-mt-4 flex flex-row items-start justify-start">
             <div className='flex flex-row p-4 items-center'>
 
               <Avatar className="h-16 w-16">
@@ -187,20 +190,18 @@ export function TripDetailsDrawer({
           </div>
 
           {/* Trip Details */}
-          <div className='mb-4  justify-center'>
-            <div className="flex flex-row items-center justify-center gap-1 px-4 py-1">
+          <div className='mb-4  justify-between items-center'>
+            <div className="flex flex-row items-center justify-between gap-1 px-4 py-1">
               <Clock className="h-3.5 w-3.5 text-primary" />
               <div className='flex flex-row gap-1'>
                 <p className="text-sm text-muted-foreground">Chegada prevista: </p>
                 <p className="text-sm font-semibold text-foreground">{arrivalTime}</p>
               </div>
-            </div>
-            <div className="flex items-center justify-center gap-1 px-4 py-1">
               <div className="flex flex-row items-center justify-center gap-1">
                 <UsersRound className="h-3.5 w-3.5 text-primary" />
               </div>
               <div className='flex items-center gap-1'>
-                <p className="text-sm text-muted-foreground">Vagas disponíveis:</p>
+                <p className="text-sm text-muted-foreground">Vagas:</p>
                 <p className="text-sm font-semibold text-foreground">
                   {trip.vagasDisponiveis} <span className='font-normal text-muted-foreground text-xs'> / </span> {trip.capacidadeTotal}
                 </p>
